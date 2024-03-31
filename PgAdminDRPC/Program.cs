@@ -27,6 +27,12 @@ namespace PgAdminDRPC
             // To hide:
             ShowWindow(handle, SW_HIDE);
 
+            // Register the app to be auto startup
+            using (var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+            {
+                key?.SetValue("MBVRK.PgAdminDRPC", System.Reflection.Assembly.GetExecutingAssembly().Location);
+            }
+
             var worker = new PresenceWorker();
 
             try

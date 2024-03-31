@@ -31,52 +31,54 @@ namespace PgAdminDRPC
         public Timer Timer;
 
 
-        public PresenceWorker()
-        {
-            Timer = new Timer(_ => CheckPgAdmin(), null, TimeSpan.Zero, TimeSpan.FromSeconds(1));
-        }
-
         /// <summary>
         /// Starts the presence
         /// </summary>
         public void Start()
 		{
 			// Create and start a timer to keep the presence up to date
-			var timer = new Timer(_ => CheckPgAdmin(), null, TimeSpan.Zero, TimeSpan.FromSeconds(1));
-
-            timer.Dispose();
+			Timer = new Timer(_ => CheckPgAdmin(), null, TimeSpan.Zero, TimeSpan.FromSeconds(1));
         }
 
 
 
 		private void CheckPgAdmin()
 		{
-			var isPgAdminOpen = RunningAppChecker.IsOneAppRunning(pgAdminProcessNames);
-			if (isPgAdminOpen)
-			{
-				if (isPgAdminFirstRun)
+            var isDiscordRunning = RunningAppChecker.IsAppRunning("discord");
+            if ( isDiscordRunning )
+            {
+                var isPgAdminOpen = RunningAppChecker.IsOneAppRunning(pgAdminProcessNames);
+                if (isPgAdminOpen)
                 {
-                    currentPgAdminProcessName = GetWhichProcessNameIsRunning();
-                    currentPgAdminAppVersion  = GetWhichAppVersionIsRunning();
-                    
-					presence.InitializePresence("1223760050753896548");
+                    if (isPgAdminFirstRun)
+                    {
+                        currentPgAdminProcessName = GetWhichProcessNameIsRunning();
+                        currentPgAdminAppVersion  = GetWhichAppVersionIsRunning();
 
-					presence.UpdateLargeImage("logo", currentPgAdminAppVersion);
-					presence.UpdateDetails(currentPgAdminAppVersion);
+                        presence.InitializePresence("1223760050753896548");
+
+                        presence.UpdateLargeImage("logo", currentPgAdminAppVersion);
+                        presence.UpdateDetails(currentPgAdminAppVersion);
 
 
-					startTime         = RunningAppChecker.GetProcessStartTime(currentPgAdminProcessName);
-					isPgAdminFirstRun = false;
-				}
+                        startTime         = RunningAppChecker.GetProcessStartTime(currentPgAdminProcessName);
+                        isPgAdminFirstRun = false;
+                    }
 
-				UpdatePresence();
-			}
-			else
-			{
-				presence.ShutDown();
-				isPgAdminFirstRun = true;
-			}
-		}
+                    UpdatePresence();
+                }
+                else
+                {
+                    presence.ShutDown();
+                    isPgAdminFirstRun = true;
+                }
+            }
+            else
+            {
+                presence.ShutDown();
+                isPgAdminFirstRun = true;
+            }
+        }
 
 
 		/// <summary>
