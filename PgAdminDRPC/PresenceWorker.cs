@@ -61,7 +61,7 @@ namespace PgAdminDRPC
                     
 					presence.InitializePresence("1223760050753896548");
 
-					presence.UpdateLargeImage("postgresql", currentPgAdminAppVersion);
+					presence.UpdateLargeImage("logo", currentPgAdminAppVersion);
 					presence.UpdateDetails(currentPgAdminAppVersion);
 
 
